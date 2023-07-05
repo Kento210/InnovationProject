@@ -1,30 +1,35 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React, { Component } from 'react';
+import logo from './logo.svg';
+import './App.css';
+// aws-amplifyの読み込み
 import Amplify from 'aws-amplify';
-import awsconfig from './aws-exports';
+// Reactへの組み込み用HOC
+import { withAuthenticator } from 'aws-amplify-react';
 
-Amplify.configure(awsconfig);
+// AWSリソースの情報読み込み
+Amplify.configure({
+    Auth: {
+        identityPoolId: '', //REQUIRED - Amazon Cognito Identity Pool ID
+        region: '', // REQUIRED - Amazon Cognito Region
+        userPoolId: '', //OPTIONAL - Amazon Cognito User Pool ID
+    }
+});
 
-
-export default function AuthForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = data => console.log(data);
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input {...register("email", { required: "Email is required", pattern: { value: /^\S+@\S+$/i, message: "Invalid email address" } })} />
-      {errors.email && <p>{errors.email.message}</p>}
-      
-      <select {...register("grade", { required: "Grade is required" })}>
-        <option value="">Select...</option>
-        <option value="1">1st Grade</option>
-        <option value="2">2nd Grade</option>
-        <option value="3">3rd Grade</option>
-        // 他のオプションを追加...
-      </select>
-      {errors.grade && <p>{errors.grade.message}</p>}
-
-      <input type="submit" />
-    </form>
-  );
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h1 className="App-title">Welcome to React</h1>
+        </header>
+        <p className="App-intro">
+          To get started, edit <code>src/App.js</code> and save to reload.
+        </p>
+      </div>
+    );
+  }
 }
+
+// withAuthenticatorでラップする
+export default withAuthenticator(App);
